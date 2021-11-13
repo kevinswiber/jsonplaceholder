@@ -1,9 +1,9 @@
 openapi: 3.0.0
 info:
-  version: 1.0.0
-  title: JSON Placeholder
+  version: '1.0.0'
+  title: 'JSON Placeholder (CircleCI, Kong API Gateway)'
 servers:
-  - url: 'https://petstore.swagger.io/v1'
+  - url: 'localhost:3000'
 paths:
   /user:
     get:
