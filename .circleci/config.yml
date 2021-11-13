@@ -1,0 +1,6 @@
+version: 2.1
+workflows:
+  main:
+    jobs:
+      - node/test:
+          version: 16.11.1
