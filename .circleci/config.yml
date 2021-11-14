@@ -5,7 +5,7 @@ orbs:
 version: 2.1
 
 jobs:
-  staging-api-gateway:
+  api-gateway:
     executor:
       name: newman/postman-newman-docker
       tag: 5.2.0
@@ -13,11 +13,12 @@ jobs:
       - checkout
       - newman/newman-run:
           collection: ./postman/collections/[CircleCI + Kong] JSON Placeholder Deployment_c897c8b0-1aa0-4a69-bf7c-340af7756052.json
+
 workflows:
   main:
     jobs:
       - node/test
-  staging:
-    jobs:
-      - node/test
-      - staging-api-gateway
+      - api-gateway:
+          filters:
+            branches:
+              only: /^release-.*/
