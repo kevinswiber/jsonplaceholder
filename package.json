@@ -40,13 +40,5 @@
     "tape": "^4.13.0",
     "underscore": "~1.12.1"
   },
-  "engines": {
-    "node": "14.x"
-  },
-  "license": "MIT",
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm test"
-    }
-  }
+  "license": "MIT"
 }
