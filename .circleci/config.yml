@@ -12,7 +12,7 @@ jobs:
     steps:
       - checkout
       - newman/newman-run:
-          collection: ./postman/collections/[CircleCI + Kong] JSON Placeholder Deployment_c897c8b0-1aa0-4a69-bf7c-340af7756052.json
+          collection: '"./postman/collections/[CircleCI + Kong] JSON Placeholder Deployment_c897c8b0-1aa0-4a69-bf7c-340af7756052.json"'
 
 workflows:
   main:
