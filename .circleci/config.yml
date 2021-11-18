@@ -1,24 +1,42 @@
-orbs:
-  newman: postman/newman@0.0.2
-  node: circleci/node@4.7.0
-
 version: 2.1
+executors:
+  my-runner:
+    machine: true
+    resource_class: ci-runner/open-tech-staging
+  
+workflows:
+  my-workflow:
+    jobs:
+      - my-job
 
 jobs:
-  api-gateway:
-    executor:
-      name: newman/postman-newman-docker
-      tag: 5.2.0
+  my-job:
+    executor: my-runner
     steps:
       - checkout
-      - newman/newman-run:
-          collection: '"./postman/collections/[CircleCI + Kong] JSON Placeholder Deployment_c897c8b0-1aa0-4a69-bf7c-340af7756052.json"'
+      - run: echo "Hello from my custom runner!"
 
-workflows:
-  main:
-    jobs:
-      - node/test
-      - api-gateway:
-          filters:
-            branches:
-              only: /^release-.*/
+# orbs:
+#   newman: postman/newman@0.0.2
+#   node: circleci/node@4.7.0
+# 
+# version: 2.1
+# 
+# jobs:
+#   api-gateway:
+#     executor:
+#       name: newman/postman-newman-docker
+#       tag: 5.2.0
+#     steps:
+#       - checkout
+#       - newman/newman-run:
+#           collection: '"./postman/collections/[CircleCI + Kong] JSON Placeholder Deployment_c897c8b0-1aa0-4a69-bf7c-340af7756052.json"'
+# 
+# workflows:
+#   main:
+#     jobs:
+#       - node/test
+#       - api-gateway:
+#           filters:
+#             branches:
+#               only: /^release-.*/
