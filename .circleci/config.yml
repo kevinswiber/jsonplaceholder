@@ -18,7 +18,7 @@ jobs:
     executor: my-runner
     steps:
       - checkout
-      - kubernetes/install_kubectl
+      - kubernetes/install-kubectl
       - run: kubectl proxy
       - run: curl -i http://localhost:8001
       - run: echo "Hello from my custom runner!"
