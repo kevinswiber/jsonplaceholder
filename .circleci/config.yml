@@ -1,22 +1,49 @@
 version: 2.1
 
+orbs:
+  newman: postman/newman@0.0.2
+  kubernetes: circleci/kubernetes@0.12.1
+
 executors:
-  my-runner:
+  ci-runner:
     machine: true
     resource_class: ci-runner/open-tech-staging
 
 workflows:
-  my-workflow:
+  deployment:
     jobs:
-      - my-job
+      - deploy
 
 jobs:
-  my-job:
-    executor: my-runner
+  deploy:
+    executor: ci-runner
     steps:
       - checkout
-      - run: ./ci/kubecurl.sh
-      - run: echo "Hello from my custom runner!"
+      - kubernetes/install-kubectl
+      - kubernetes/create-or-update-resource:
+          get-rollout-status: true
+          resource-file-path: ./ci/deployment.yaml
+
+  # my-job:
+  #    executor: my-runner
+  #    steps:
+  #      - checkout
+  #      - run: ./ci/kubecurl.sh
+  #      - run: echo "Hello from my custom runner!"
+  # newman-collection-run:
+  #   machine: true
+  #   resource_class: ci-runner/open-tech-staging
+  #   executor:
+  #     name: newman/postman-newman-docker
+  #     tag: 5.2.0
+  #   steps:
+  #     - checkout
+  #     - newman/newman-run:
+  #         collection: '"./postman/collections/[CircleCI + Kong] JSONPlaceholder Deployment_296499c6-d8ba-4cf6-ab60-b40a10b02104.json"'
+  #         additional_options: >
+  #           --env-var=baseUrl=https://kubernetes.default.svc
+  #           --env-var=token=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+  #           --ssl-client-cert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
 # orbs:
 #   newman: postman/newman@0.0.2
 #   node: circleci/node@4.7.0
