@@ -19,7 +19,9 @@ jobs:
     steps:
       - checkout
       - kubernetes/install-kubectl
-      - run: kubectl proxy
+      - run:
+          command: kubectl proxy
+          background: true
       - run: curl -i http://localhost:8001
       - run: echo "Hello from my custom runner!"
 
