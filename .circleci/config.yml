@@ -22,7 +22,7 @@ jobs:
       - run:
           command: kubectl proxy
           background: true
-      - run: sleep 3000
+      - run: sleep 3
       - run: curl -i http://localhost:8001
       - run: echo "Hello from my custom runner!"
 
