@@ -1,0 +1,62 @@
+{
+    "info": {
+        "_postman_id": "b66f14c7-b43e-4e16-9ca6-f550f059799f",
+        "name": "[CircleCI + Kong] JSONPlaceholder Deployment",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Test Kubernetes API Access",
+            "id": "9dbb2109-d348-4009-90d5-c97f316d5858",
+            "protocolProfileBehavior": {
+                "disableBodyPruning": true
+            },
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/api",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "api"
+                    ]
+                }
+            },
+            "response": []
+        }
+    ],
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "id": "e22f5a9a-a30c-47c3-87b6-6bae9a18b17c",
+                "type": "text/javascript",
+                "exec": [
+                    "const token = pm.variables.get('token');",
+                    "if (token) {",
+                    "  pm.request.addHeader(`Authorization: Bearer ${token}`);",
+                    "}"
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "id": "f7669813-af69-4110-8e20-84db313471e1",
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        }
+    ],
+    "variable": [
+        {
+            "id": "749114ca-ddf7-4dc6-948d-356064063649",
+            "key": "baseUrl",
+            "value": "http://localhost:8001"
+        }
+    ]
+}
