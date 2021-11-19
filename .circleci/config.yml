@@ -1,13 +1,10 @@
 version: 2.1
 
-orbs:
-  kubernetes: circleci/kubernetes@0.12.1
-
 executors:
   my-runner:
     machine: true
     resource_class: ci-runner/open-tech-staging
-  
+
 workflows:
   my-workflow:
     jobs:
@@ -18,20 +15,14 @@ jobs:
     executor: my-runner
     steps:
       - checkout
-      - kubernetes/install-kubectl
-      - run:
-          command: kubectl proxy
-          background: true
-      - run: sleep 10
-      - run: curl -i http://localhost:8001
+      - run: ./ci/kubecurl.sh
       - run: echo "Hello from my custom runner!"
-
 # orbs:
 #   newman: postman/newman@0.0.2
 #   node: circleci/node@4.7.0
-# 
+#
 # version: 2.1
-# 
+#
 # jobs:
 #   api-gateway:
 #     executor:
@@ -41,7 +32,7 @@ jobs:
 #       - checkout
 #       - newman/newman-run:
 #           collection: '"./postman/collections/[CircleCI + Kong] JSON Placeholder Deployment_c897c8b0-1aa0-4a69-bf7c-340af7756052.json"'
-# 
+#
 # workflows:
 #   main:
 #     jobs:
