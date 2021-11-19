@@ -1,4 +1,8 @@
 version: 2.1
+
+orbs:
+  circleci/kubernetes@0.12.1
+
 executors:
   my-runner:
     machine: true
@@ -14,6 +18,9 @@ jobs:
     executor: my-runner
     steps:
       - checkout
+      - kubernetes/install_kubectl
+      - run: kubectl proxy
+      - run: curl -i http://localhost:8001
       - run: echo "Hello from my custom runner!"
 
 # orbs:
