@@ -30,8 +30,10 @@ jobs:
       - run:
           command: >
             newman run
+            --folder=Run
             --env-var=kubeBaseUrl=https://kubernetes.default.svc
             --env-var=token=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+            --env-var=openapi=$(node -p "const fs = require('fs'); JSON.stringify(fs.readFileSync('./postman/schemas/schema.yaml', 'utf-8'));")
             --ssl-extra-ca-certs /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
             --verbose
             "./postman/collections/[CircleCI + Kong] JSONPlaceholder Deployment_296499c6-d8ba-4cf6-ab60-b40a10b02104.json"
