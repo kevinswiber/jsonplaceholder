@@ -29,6 +29,7 @@ jobs:
             --env-var=baseUrl=https://kubernetes.default.svc
             --env-var=token=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
             --ssl-extra-ca-certs /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+            --verbose
             "./postman/collections/[CircleCI + Kong] JSONPlaceholder Deployment_296499c6-d8ba-4cf6-ab60-b40a10b02104.json"
       - run:
           command: rm /tmp/node-project-*
