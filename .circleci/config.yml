@@ -7,7 +7,7 @@ orbs:
 executors:
   ci-runner:
     machine: true
-    resource_class: ci-runner/open-tech-staging
+    resource_class: ci-runner/kubernetes
 
 workflows:
   deployment:
