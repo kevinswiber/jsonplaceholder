@@ -17,8 +17,8 @@ spec:
       containers:
         - name: newman
           image: postman/newman:alpine
-          command: >
-            --collection='"./postman/collections/[CircleCI + Kong] JSONPlaceholder Deployment_296499c6-d8ba-4cf6-ab60-b40a10b02104.json"'
-            --env-var=baseUrl=https://kubernetes.default.svc
-            --env-var=token=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
-            --ssl-client-cert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+          command:
+            - --collection="./postman/collections/[CircleCI + Kong] JSONPlaceholder Deployment_296499c6-d8ba-4cf6-ab60-b40a10b02104.json"
+            - --env-var=baseUrl=https://kubernetes.default.svc
+            - --env-var=token=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+            - --ssl-client-cert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
