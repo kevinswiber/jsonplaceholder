@@ -18,6 +18,7 @@ jobs:
   deploy:
     executor: ci-runner
     steps:
+      - checkout
       - node/install
       - node/install-npm
       - node/install-packages
