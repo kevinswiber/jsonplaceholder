@@ -31,9 +31,12 @@
     "newrelic": "^8.6.0"
   },
   "devDependencies": {
+    "express": "^4.17.1",
     "Faker": "~0.7.2",
     "husky": "^4.2.2",
+    "js-yaml": "^4.1.0",
     "nodemon": "^2.0.2",
+    "openapi-2-kong": "^2.4.0",
     "pupa": "^2.0.1",
     "rosie": "~2.0.1",
     "showdown": "^1.9.1",

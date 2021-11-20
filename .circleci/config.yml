@@ -24,9 +24,13 @@ jobs:
       - node/install-packages
       - run: npm install -g newman
       - run:
+          command: node ./ci/openapi2kong/server
+          background: true
+      - run: sleep 2
+      - run:
           command: >
             newman run
-            --env-var=baseUrl=https://kubernetes.default.svc
+            --env-var=kubeBaseUrl=https://kubernetes.default.svc
             --env-var=token=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
             --ssl-extra-ca-certs /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
             --verbose
