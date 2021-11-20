@@ -3,8 +3,23 @@ info:
   version: 1.0.0
   title: "[CircleCI + Kong] JSON Placeholder"
   description: See https://jsonplaceholder.typicode.com/
+  x-kubernetes-ingress-metadata:
+    name: json-placeholder
+servers:
+  - url: http://a3f3a529480354df8bab007b3ab4d2af-285095836.us-west-2.elb.amazonaws.com
+    description: JSON Placeholder
+    x-kubernetes-service:
+      metadata:
+        name: json-placeholder-svc
 paths:
   /posts:
+    x-kong-plugin-key-auth:
+      name: key-auth
+      enabled: true
+      config:
+        key_names: [api_key, apikey]
+        key_in_body: false
+        hide_credentials: true
     get:
       description: Returns all posts
       tags: ["Posts"]
