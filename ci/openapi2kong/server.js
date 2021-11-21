@@ -14,15 +14,7 @@ app.post('/converter', (req, res) => {
   const spec = yaml.load(req.body);
   const config = generateFromSpec(spec, 'kong-for-kubernetes');
 
-  const documents = [
-    '',
-    ...config.documents.map((doc) => {
-      return yaml.dump(doc);
-    }),
-  ].join('---\n');
-
-  res.contentType('text/yaml');
-  res.send(documents);
+  res.json(config.documents);
 });
 
 const port = process.env.PORT || 3001;
