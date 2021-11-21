@@ -20,7 +20,6 @@ jobs:
     steps:
       - checkout
       - node/install
-      - node/install-npm
       - node/install-packages
       - run: npm install -g newman
       - run:
