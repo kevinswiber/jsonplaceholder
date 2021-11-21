@@ -1,7 +1,7 @@
 {
     "info": {
         "_postman_id": "b66f14c7-b43e-4e16-9ca6-f550f059799f",
-        "name": "[CircleCI + Kong] JSONPlaceholder Deployment",
+        "name": "[CircleCI + Kong] Deployment",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
     "item": [
@@ -66,7 +66,61 @@
                     "response": []
                 }
             ],
-            "id": "e5bbb7e7-4f97-4d8d-b3ef-96c8c68ebeac"
+            "id": "e5bbb7e7-4f97-4d8d-b3ef-96c8c68ebeac",
+            "event": [
+                {
+                    "listen": "prerequest",
+                    "script": {
+                        "id": "cbe8c176-da7d-40a7-ad8b-6a3e3677c198",
+                        "type": "text/javascript",
+                        "exec": [
+                            "const requiredVariables = [",
+                            "  'kubeBaseUrl',",
+                            "  'o2kBaseUrl',",
+                            "  'apiId',",
+                            "  'apiVersionId',",
+                            "  'schemaId',",
+                            "  'postmanAPIKey'",
+                            "];",
+                            "",
+                            "const missingVars = requiredVariables.filter((item) => {",
+                            "  const v = pm.variables.get(item);",
+                            "  return !v || v[0] === '<';",
+                            "});",
+                            "",
+                            "if (missingVars.length) {",
+                            "  const message = [",
+                            "    `The following variables are required: ${missingVars.join(', ')}.`,",
+                            "    'They can be set under the Variables tab of the Collection.'",
+                            "  ].join(' ');",
+                            "",
+                            "  throw new Error(message);",
+                            "}",
+                            "",
+                            "const resetVars = [",
+                            "  'openapi',",
+                            "  'kongKubernetesResources',",
+                            "  'index',",
+                            "  'resourcePathCache'",
+                            "]",
+                            "",
+                            "for (const item of resetVars) {",
+                            "  pm.collectionVariables.set(item, '');",
+                            "}"
+                        ]
+                    }
+                },
+                {
+                    "listen": "test",
+                    "script": {
+                        "id": "b1f058f5-d1d8-4ab8-a29e-1917583f4869",
+                        "type": "text/javascript",
+                        "exec": [
+                            ""
+                        ]
+                    }
+                }
+            ]
         },
         {
             "name": "Run",
@@ -87,6 +141,30 @@
                                             "if (openapi) {",
                                             "  pm.variables.set('openapi', JSON.parse(openapi));",
                                             "}"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                },
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "id": "77b47414-a5b2-43ce-a3e4-756ad38091a7",
+                                        "exec": [
+                                            "pm.test('status code is 200', () => {",
+                                            "  pm.response.to.have.status(200);",
+                                            "});",
+                                            "",
+                                            "const response = pm.response.json();",
+                                            "",
+                                            "pm.test('response has length', () => {",
+                                            "  pm.expect(response.length).to.be.gt(0);",
+                                            "});",
+                                            "",
+                                            "pm.test('response is JSON', () => {",
+                                            "  pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json/);",
+                                            "});",
+                                            "",
+                                            "pm.collectionVariables.set('kongKubernetesResources', JSON.stringify(response));"
                                         ],
                                         "type": "text/javascript"
                                     }
@@ -132,94 +210,17 @@
                         {
                             "listen": "prerequest",
                             "script": {
-                                "id": "1ab9ebf9-034d-4c39-97ae-9e8d05273c16",
+                                "id": "3bb383cc-be7b-44fc-b7c3-b4c5f446ebce",
                                 "type": "text/javascript",
                                 "exec": [
-                                    "const spec = `openapi: 3.0.3",
-                                    "info:",
-                                    "  version: 1.0.0",
-                                    "  title: \"[CircleCI + Kong] JSON Placeholder\"",
-                                    "  description: See https://jsonplaceholder.typicode.com/",
-                                    "  x-kubernetes-ingress-metadata:",
-                                    "    name: json-placeholder",
-                                    "servers:",
-                                    "  - url: https://jsonplaceholder.typicode.com/",
-                                    "    description: JSON Placeholder",
-                                    "    x-kubernetes-service:",
-                                    "      metadata:",
-                                    "        name: json-placeholder-svc",
-                                    "paths:",
-                                    "  /posts:",
-                                    "    x-kong-plugin-key-auth:",
-                                    "      name: key-auth",
-                                    "      enabled: true",
-                                    "      config:",
-                                    "        key_names: [api_key, apikey]",
-                                    "        key_in_body: false",
-                                    "        hide_credentials: true",
-                                    "    get:",
-                                    "      description: Returns all posts",
-                                    "      tags: [\"Posts\"]",
-                                    "      operationId: \"getPosts\"",
-                                    "      responses:",
-                                    "        \"200\":",
-                                    "          description: Successful response",
-                                    "          content:",
-                                    "            \"application/json\":",
-                                    "              schema:",
-                                    "                $ref: \"#/components/schemas/PostsList\"",
-                                    "",
-                                    "  /posts/{id}:",
-                                    "    get:",
-                                    "      description: Returns a post by id",
-                                    "      tags: [\"Posts\"]",
-                                    "      operationId: \"getPost\"",
-                                    "      parameters:",
-                                    "        - name: id",
-                                    "          in: path",
-                                    "          required: true",
-                                    "          description: The user id.",
-                                    "          schema:",
-                                    "            type: integer",
-                                    "            format: int64",
-                                    "      responses:",
-                                    "        \"200\":",
-                                    "          description: Successful response",
-                                    "          content:",
-                                    "            \"application/json\":",
-                                    "              schema:",
-                                    "                $ref: \"#/components/schemas/Post\"",
-                                    "        \"404\":",
-                                    "          description: Post not found",
-                                    "",
-                                    "components:",
-                                    "  schemas:",
-                                    "    PostsList:",
-                                    "      \"type\": \"array\"",
-                                    "      \"items\":",
-                                    "        $ref: \"#/components/schemas/Post\"",
-                                    "    Post:",
-                                    "      \"type\": \"object\"",
-                                    "      \"required\":",
-                                    "        - \"id\"",
-                                    "        - \"userId\"",
-                                    "        - \"title\"",
-                                    "        - \"completed\"",
-                                    "      \"properties\":",
-                                    "        id:",
-                                    "          type: \"integer\"",
-                                    "        userId:",
-                                    "          type: \"integer\"",
-                                    "        title:",
-                                    "          type: \"string\"",
-                                    "        completed:",
-                                    "          type: \"string\"",
-                                    "`;",
-                                    "",
-                                    "console.log(pm.variables.get('openapi'));",
-                                    "",
                                     "if (!pm.variables.get('openapi')) {",
-                                    "  pm.variables.set('openapi', JSON.stringify(spec));",
+                                    "  const message = [",
+                                    "    `The following variable is required: openapi.`,",
+                                    "    'It can be set under the Variables tab of the Collection',",
+                                    "    'or by running the \"Initialize/Get Open API Definition\" request.'",
+                                    "  ].join(' ');",
+                                    "  ",
+                                    "  throw new Error(message);",
                                     "}"
                                 ]
                             }
@@ -227,7 +228,7 @@
                         {
                             "listen": "test",
                             "script": {
-                                "id": "a73b785c-187b-4e81-90a5-7c0a08383099",
+                                "id": "9177c44d-64b7-494d-8fd1-b9ea310107d9",
                                 "type": "text/javascript",
                                 "exec": [
                                     ""
@@ -240,8 +241,103 @@
                     "name": "Kubernetes",
                     "item": [
                         {
-                            "name": "Test Kubernetes API Access",
-                            "id": "d03e351b-59c9-4fc6-b473-e096a87ccc7a",
+                            "name": "Find Resource Paths",
+                            "event": [
+                                {
+                                    "listen": "prerequest",
+                                    "script": {
+                                        "id": "5853ccdd-067e-479d-839e-5fabf3749bbe",
+                                        "exec": [
+                                            ""
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                },
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "id": "11e9bbfa-4c40-4b88-a17c-45553e4c83df",
+                                        "exec": [
+                                            "pm.test('status code is 200', () => {",
+                                            "  // Make sure Kubernetes API Server is accessible.",
+                                            "  pm.response.to.have.status(200);",
+                                            "});",
+                                            "",
+                                            "const resourcesVar = pm.variables.get('kongKubernetesResources');",
+                                            "",
+                                            "if (!resourcesVar) {",
+                                            "  throw new Error([",
+                                            "    'The following variable is required: resources.',",
+                                            "    'Run the \"OpenAPI to Kong/Convert OpenAPI to Kong Config\" request',",
+                                            "    'to populate the variable.'",
+                                            "  ].join(' '));",
+                                            "}",
+                                            "",
+                                            "const resources = JSON.parse(resourcesVar);",
+                                            "",
+                                            "const savedCache = pm.variables.get('resourcePathCache');",
+                                            "resourcePathCache = savedCache ? JSON.parse(savedCache) : {};",
+                                            "",
+                                            "const _dummy = setTimeout(() => {",
+                                            "  clearTimeout(_dummy);",
+                                            "  throw new Error('Tests timed out. Consider modifying timeout duration.');",
+                                            "}, 30000);",
+                                            "",
+                                            "const sendRequest = (req) => {",
+                                            "    return new Promise((resolve, reject) => {",
+                                            "        pm.sendRequest(req, (err, res) => {",
+                                            "            if (err) {",
+                                            "                return reject(err);",
+                                            "            }",
+                                            "",
+                                            "            return resolve(res);",
+                                            "        })",
+                                            "    });",
+                                            "};",
+                                            "",
+                                            "const kubeBaseUrl = pm.variables.get('kubeBaseUrl');",
+                                            "",
+                                            "(async function main() {",
+                                            "  for (let resource of resources) {",
+                                            "    const pathIdentifier = `${resource.apiVersion}/${resource.kind}`;",
+                                            "    if (!resourcePathCache[pathIdentifier]) {",
+                                            "      const groupRequest = {",
+                                            "        url: `${kubeBaseUrl}/apis/${resource.apiVersion}`,",
+                                            "        method: 'GET',",
+                                            "      };",
+                                            "",
+                                            "      const groupResponse = await sendRequest(groupRequest);",
+                                            "      const group = groupResponse.json();",
+                                            "",
+                                            "      const resourceRepresentation = group.resources.find((item) => {",
+                                            "        return item.kind === resource.kind; ",
+                                            "      });",
+                                            "      if (!resourceRepresentation) {",
+                                            "        throw new Error(`Resource ${resource.kind} isn't available on your Kubernetes API Server.`)",
+                                            "      }",
+                                            "",
+                                            "      let resourcePath = `apis/${resource.apiVersion}`;",
+                                            "      if (resourceRepresentation.namespaced) {",
+                                            "        const namespace = pm.variables.get('kubeNamespace') || 'default';",
+                                            "        resourcePath += `/namespaces/${namespace}`;",
+                                            "      }",
+                                            "      resourcePath += `/${resourceRepresentation.name}`;",
+                                            "",
+                                            "      resourcePathCache[pathIdentifier] = resourcePath;",
+                                            "    }",
+                                            "  }",
+                                            "",
+                                            "  pm.collectionVariables.set('resourcePathCache', JSON.stringify(resourcePathCache));",
+                                            "",
+                                            "  clearTimeout(_dummy);",
+                                            "})();",
+                                            ""
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "id": "35e83b19-29e3-4de1-bd95-6bbc8a560529",
                             "protocolProfileBehavior": {
                                 "disableBodyPruning": true
                             },
@@ -249,12 +345,152 @@
                                 "method": "GET",
                                 "header": [],
                                 "url": {
-                                    "raw": "{{kubeBaseUrl}}/api",
+                                    "raw": "{{kubeBaseUrl}}/apis",
                                     "host": [
                                         "{{kubeBaseUrl}}"
                                     ],
                                     "path": [
-                                        "api"
+                                        "apis"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Create or Update Kubernetes Resource",
+                            "event": [
+                                {
+                                    "listen": "prerequest",
+                                    "script": {
+                                        "id": "3085f0d6-eb03-4ac1-abcf-21e9d00688b5",
+                                        "exec": [
+                                            "new Function(pm.variables.get('jsonMergePatch'))();",
+                                            "",
+                                            "let indexVar = pm.variables.get('index');",
+                                            "",
+                                            "if (!indexVar) {",
+                                            "  pm.collectionVariables.set('index', '0');",
+                                            "  indexVar = '0';",
+                                            "}",
+                                            "",
+                                            "const index = Number(indexVar);",
+                                            "const resources = JSON.parse(pm.variables.get('kongKubernetesResources'));",
+                                            "",
+                                            "if (index >= resources.length) {",
+                                            "  throw new Error(\"Index is greater than the number of Kubernetes resources.  Consider resetting it to 0 in the collection variables.\")",
+                                            "}",
+                                            "",
+                                            "const savedCache = pm.variables.get('resourcePathCache');",
+                                            "if (!savedCache) {",
+                                            "  throw new Error([",
+                                            "    'The variable resourcePathCache has not been set.',",
+                                            "    'Please run \"Kubernetes/Find Resource Paths\" to populate this variable.'",
+                                            "  ].join(' '));",
+                                            "}",
+                                            "",
+                                            "resourcePathCache = JSON.parse(savedCache);",
+                                            "",
+                                            "let resource = resources[index];",
+                                            "const pathIdentifier = `${resource.apiVersion}/${resource.kind}`;",
+                                            "let resourcePath = resourcePathCache[pathIdentifier];",
+                                            "",
+                                            "const _dummy = setTimeout(() => {",
+                                            "  clearTimeout(_dummy);",
+                                            "  throw new Error('Tests timed out. Consider modifying timeout duration.');",
+                                            "}, 30000);",
+                                            "",
+                                            "const sendRequest = (req) => {",
+                                            "    return new Promise((resolve, reject) => {",
+                                            "        pm.sendRequest(req, (err, res) => {",
+                                            "            if (err) {",
+                                            "                return reject(err);",
+                                            "            }",
+                                            "",
+                                            "            return resolve(res);",
+                                            "        })",
+                                            "    });",
+                                            "};",
+                                            "",
+                                            "(async function main() {",
+                                            "  const kubeBaseUrl = pm.variables.get('kubeBaseUrl');",
+                                            "  const itemsResponse = await sendRequest(`${kubeBaseUrl}/${resourcePath}`);",
+                                            "  const items = itemsResponse.json().items;",
+                                            "",
+                                            "  const found = items.find((item) => {",
+                                            "    return item.metadata.name === resource.metadata.name;",
+                                            "  });",
+                                            "",
+                                            "  if (found) {",
+                                            "    pm.variables.set('M', 'PATCH');",
+                                            "    resourcePath += `/${resource.metadata.name}`",
+                                            "    resource = jsonmergepatch.apply(resource, found);",
+                                            "    pm.request.addHeader('Content-Type: application/merge-patch+json');",
+                                            "  } else {",
+                                            "    pm.variables.set('M', 'POST');",
+                                            "  }",
+                                            "",
+                                            "  pm.variables.set('resourcePath', resourcePath);",
+                                            "  pm.variables.set('resourceBody', JSON.stringify(resource));",
+                                            "",
+                                            "  clearTimeout(_dummy);",
+                                            "})();"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                },
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "id": "d003a34c-3113-4afd-bd00-07596c7f1a4a",
+                                        "exec": [
+                                            "if (pm.request.method === 'POST') {",
+                                            "  pm.test('status code is 201', () => {",
+                                            "    pm.response.to.have.status(201);",
+                                            "  });",
+                                            "} else if (pm.request.method === 'PATCH') {",
+                                            "  pm.test('status code is 200', () => {",
+                                            "    pm.response.to.have.status(200);",
+                                            "  }); ",
+                                            "}",
+                                            "",
+                                            "const index = Number(pm.variables.get('index'));",
+                                            "const resources = JSON.parse(pm.variables.get('kongKubernetesResources'));",
+                                            "",
+                                            "if (index === resources.length - 1) {",
+                                            "  postman.setNextRequest(null);",
+                                            "  pm.collectionVariables.set('index', '0');",
+                                            "} else {",
+                                            "  pm.collectionVariables.set('index', String(index+1));",
+                                            "  postman.setNextRequest('Create or Update Kubernetes Resource');",
+                                            "}"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "id": "7bccf4b2-8812-42ad-8ae4-b9177d398d45",
+                            "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                            },
+                            "request": {
+                                "method": "{{M}}",
+                                "header": [],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{{resourceBody}}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{kubeBaseUrl}}/{{resourcePath}}",
+                                    "host": [
+                                        "{{kubeBaseUrl}}"
+                                    ],
+                                    "path": [
+                                        "{{resourcePath}}"
                                     ]
                                 }
                             },
@@ -266,7 +502,7 @@
                         {
                             "listen": "prerequest",
                             "script": {
-                                "id": "607fd7c7-0958-4c27-98bd-2ac3a4a1e3f8",
+                                "id": "233b3dca-bd0d-4f5c-9327-b5390d174f0b",
                                 "type": "text/javascript",
                                 "exec": [
                                     "const token = pm.variables.get('token');",
@@ -279,7 +515,7 @@
                         {
                             "listen": "test",
                             "script": {
-                                "id": "fb00c2dd-748c-4c7f-96db-a5d258c438c6",
+                                "id": "8fd3b281-b9a9-4c30-98d1-0fac00219876",
                                 "type": "text/javascript",
                                 "exec": [
                                     ""
@@ -296,7 +532,7 @@
         {
             "listen": "prerequest",
             "script": {
-                "id": "8aaff10e-d367-4619-8565-ee76320b99e1",
+                "id": "8593b07d-dad4-4294-b5e5-d86441109473",
                 "type": "text/javascript",
                 "exec": [
                     ""
@@ -306,7 +542,7 @@
         {
             "listen": "test",
             "script": {
-                "id": "90af0357-d07f-4a47-ba70-9223d99804cb",
+                "id": "f66f1fc2-ead5-455a-a0a4-3fc0ceb9ed41",
                 "type": "text/javascript",
                 "exec": [
                     ""
@@ -316,39 +552,64 @@
     ],
     "variable": [
         {
-            "id": "97c94bc2-393d-411b-9d10-e4246d9ed3d8",
+            "id": "71b2f019-0002-4889-abef-43067f568195",
             "key": "kubeBaseUrl",
-            "value": "http://localhost:8001"
+            "value": "https://kubernetes.default.svc"
         },
         {
-            "id": "ba4af08d-238c-49c4-beb0-6291c7130627",
+            "id": "be20ff3d-c45e-437a-bce1-7b2244f353d0",
+            "key": "kubeNamespace",
+            "value": "default"
+        },
+        {
+            "id": "63a7a075-fed2-447c-b62a-986b3bac062d",
             "key": "o2kBaseUrl",
             "value": "http://localhost:3001"
         },
         {
-            "id": "f0eb5603-7a2d-4c2a-adf6-ac4a221efb76",
+            "id": "9528a126-e8d2-4435-b1a3-f4d11cfffad2",
             "key": "apiId",
-            "value": "API_ID - optional"
+            "value": "<<Only needed in Postman app, not Newman>>"
         },
         {
-            "id": "1522ad34-8074-47e4-8f83-fcea3fe6b6fd",
+            "id": "56922b40-f3e5-4093-87dc-b21c0e33911a",
             "key": "apiVersionId",
-            "value": "API_VERSION_ID - optional"
+            "value": "<<Only needed in Postman app, not Newman>>"
         },
         {
-            "id": "27dfcce0-a109-41b5-b4df-9e8efd537e39",
+            "id": "fe713abb-cbae-4604-a31e-2e6508c5a086",
             "key": "schemaId",
-            "value": "SCHEMA_ID - optional"
+            "value": "<<Only needed in Postman app, not Newman>>"
         },
         {
-            "id": "474befa3-35c9-4acc-b279-1724436d44bf",
+            "id": "baa054c9-da7d-4054-9e31-f17166d72f65",
             "key": "postmanAPIKey",
-            "value": "POSTMAN_API_KEY - optional"
+            "value": "<<Only needed in Postman app, not Newman>>"
         },
         {
-            "id": "a1520026-be55-4718-afb7-d18d3ab45a6f",
+            "id": "7c5efdb3-34c6-4d0c-9ad6-9b1b408884e6",
             "key": "openapi",
-            "value": "OPENAPI - optional"
+            "value": "<<Set automatically in Postman app>> "
+        },
+        {
+            "id": "f2d52adc-59d4-4b54-87b2-8746045c8a31",
+            "key": "kongKubernetesResources",
+            "value": "<<Set automatically>>"
+        },
+        {
+            "id": "045dc374-d0da-4b30-8a48-541f511d10f3",
+            "key": "index",
+            "value": "<<Set automatically>>"
+        },
+        {
+            "id": "d593dfc3-9800-4b5e-97ae-12ac411cddf8",
+            "key": "resourcePathCache",
+            "value": "<<Set automatically>>"
+        },
+        {
+            "id": "8fae35de-17f4-477f-8e59-ed2d2537cdfc",
+            "key": "jsonMergePatch",
+            "value": "(()=>{var r={10:(r,e,t)=>{\"use strict\";r.exports.apply=t(774),r.exports.generate=t(811),r.exports.merge=t(302)},774:(r,e,t)=>{\"use strict\";var o=t(988).q;r.exports=function r(e,t){if(null===(t=o(t))||\"object\"!=typeof t||Array.isArray(t))return t;(null===(e=o(e))||\"object\"!=typeof e||Array.isArray(e))&&(e={});for(var n=Object.keys(t),u=0;u<n.length;u++){var f=n[u];if(\"__proto__\"===f||\"constructor\"===f||\"prototype\"===f)return e;null===t[f]?e.hasOwnProperty(f)&&delete e[f]:e[f]=r(e[f],t[f])}return e}},811:(r,e,t)=>{\"use strict\";var o=t(63),n=t(988).q;r.exports=function r(e,t){if(e=n(e),t=n(t),null===e||null===t||\"object\"!=typeof e||\"object\"!=typeof t||Array.isArray(e)!==Array.isArray(t))return t;if(Array.isArray(e))return function(r,e){if(r.length!==e.length)return!1;for(var t=0;t<r.length;t++)if(!o(e[t],r[t]))return!1;return!0}(e,t)?void 0:t;var u,f,i={},s=Object.keys(e),c=Object.keys(t),a={};for(f=0;f<c.length;f++)u=c[f],-1===s.indexOf(u)&&(a[u]=!0,i[u]=n(t[u]));var l={};for(f=0;f<s.length;f++)if(u=s[f],-1===c.indexOf(u))l[u]=!0,i[u]=null;else if(null!==e[u]&&\"object\"==typeof e[u]){var y=r(e[u],t[u]);void 0!==y&&(i[u]=y)}else e[u]!==t[u]&&(i[u]=n(t[u]));return Object.keys(i).length>0?i:void 0}},302:r=>{\"use strict\";r.exports=function r(e,t){if(null===e||null===t||\"object\"!=typeof e||\"object\"!=typeof t||Array.isArray(e)!==Array.isArray(t))return t;var o=JSON.parse(JSON.stringify(e));return Object.keys(t).forEach((function(n){void 0!==e[n]?o[n]=r(e[n],t[n]):o[n]=t[n]})),o}},988:r=>{\"use strict\";r.exports.q=function(r){return r&&\"function\"==typeof r.toJSON?r.toJSON():r}},63:r=>{\"use strict\";r.exports=function r(e,t){if(e===t)return!0;if(e&&t&&\"object\"==typeof e&&\"object\"==typeof t){if(e.constructor!==t.constructor)return!1;var o,n,u;if(Array.isArray(e)){if((o=e.length)!=t.length)return!1;for(n=o;0!=n--;)if(!r(e[n],t[n]))return!1;return!0}if(e.constructor===RegExp)return e.source===t.source&&e.flags===t.flags;if(e.valueOf!==Object.prototype.valueOf)return e.valueOf()===t.valueOf();if(e.toString!==Object.prototype.toString)return e.toString()===t.toString();if((o=(u=Object.keys(e)).length)!==Object.keys(t).length)return!1;for(n=o;0!=n--;)if(!Object.prototype.hasOwnProperty.call(t,u[n]))return!1;for(n=o;0!=n--;){var f=u[n];if(!r(e[f],t[f]))return!1}return!0}return e!=e&&t!=t}}},e={},t=function t(o){var n=e[o];if(void 0!==n)return n.exports;var u=e[o]={exports:{}};return r[o](u,u.exports,t),u.exports}(10),o=jsonmergepatch=\"undefined\"==typeof jsonmergepatch?{}:jsonmergepatch;for(var n in t)o[n]=t[n];t.__esModule&&Object.defineProperty(o,\"__esModule\",{value:!0})})();"
         }
     ]
 }
