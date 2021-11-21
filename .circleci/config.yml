@@ -22,14 +22,13 @@ jobs:
       - node/install
       - node/install-npm
       - node/install-packages
-      - run: npm install -g newman
       - run:
           command: node ./ci/openapi2kong/server
           background: true
       - run: sleep 2
       - run:
           command: >
-            newman run
+            npx newman run
             --folder=Run
             --env-var=kubeBaseUrl=https://kubernetes.default.svc
             --env-var=token=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
@@ -37,8 +36,8 @@ jobs:
             --ssl-extra-ca-certs /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
             --verbose
             "./postman/collections/[CircleCI + Kong] JSONPlaceholder Deployment_296499c6-d8ba-4cf6-ab60-b40a10b02104.json"
-      - run:
-          command: rm /tmp/node-project-*
+      - run: # clean up temp files from node orb for CircleCI Runner.
+          command: rm /tmp/node-project-* || true
           when: always
 #    steps:
 #      - checkout
