@@ -22,13 +22,14 @@ jobs:
       - node/install
       - node/install-npm
       - node/install-packages
+      - run: npm install -g newman
       - run:
           command: node ./ci/openapi2kong/server
           background: true
       - run: sleep 2
       - run:
           command: >
-            npx newman run
+            newman run
             --folder=Run
             --env-var=kubeBaseUrl=https://kubernetes.default.svc
             --env-var=token=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
