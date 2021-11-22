@@ -4,13 +4,16 @@ info:
   title: "[CircleCI + Kong] JSON Placeholder"
   description: See https://jsonplaceholder.typicode.com/
   x-kubernetes-ingress-metadata:
-    name: json-placeholder
+    name: jsonplaceholder
 servers:
   - url: http://a3f3a529480354df8bab007b3ab4d2af-285095836.us-west-2.elb.amazonaws.com
     description: JSON Placeholder
     x-kubernetes-service:
+      spec:
+        ports:
+          - port: 3001
       metadata:
-        name: json-placeholder-svc
+        name: jsonplaceholder-svc
 paths:
   /posts:
     x-kong-plugin-key-auth:

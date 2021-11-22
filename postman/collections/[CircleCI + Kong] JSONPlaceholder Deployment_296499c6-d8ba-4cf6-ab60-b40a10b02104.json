@@ -130,7 +130,7 @@
                     "name": "Prepare Kubernetes Resources",
                     "item": [
                         {
-                            "name": "Convert OpenAPI to Kong Config",
+                            "name": "Convert OpenAPI to Kong for Kubernetes",
                             "event": [
                                 {
                                     "listen": "prerequest",
@@ -167,7 +167,8 @@
                                             "",
                                             "const resourcesVar = pm.collectionVariables.set('kongKubernetesResources') || '[]';",
                                             "const resources = JSON.parse(resourcesVar);",
-                                            "pm.collectionVariables.set('kongKubernetesResources', JSON.stringify(resources.concat(response)));"
+                                            "pm.collectionVariables.set('kongKubernetesResources', JSON.stringify(resources.concat(response)));",
+                                            ""
                                         ],
                                         "type": "text/javascript"
                                     }
@@ -229,7 +230,8 @@
                                             "  pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json/);",
                                             "});",
                                             "",
-                                            "const resourcesVar = pm.collectionVariables.set('kongKubernetesResources') || '[]';",
+                                            "const resourcesVar = pm.collectionVariables.get('kongKubernetesResources') || '[]';",
+                                            "",
                                             "const resources = JSON.parse(resourcesVar);",
                                             "pm.collectionVariables.set('kongKubernetesResources', JSON.stringify(resources.concat(response)));"
                                         ],
@@ -622,7 +624,8 @@
                                             "  resourcePath += `/namespaces/${namespace}`;",
                                             "}",
                                             "resourcePath += `/${kubeAPIResource.name}/${resource.metadata.name}`;",
-                                            "resource = jsonmergepatch.apply(resource, JSON.parse(pm.variables.get('currentKubeResource')));",
+                                            "",
+                                            "resource = jsonmergepatch.apply(JSON.parse(pm.variables.get('currentKubeResource')), resource);",
                                             "",
                                             "pm.request.addHeader('Content-Type: application/merge-patch+json');",
                                             "pm.variables.set('resourcePath', resourcePath);",
@@ -747,67 +750,67 @@
     ],
     "variable": [
         {
-            "id": "3aef9b1c-7381-4082-b70c-994802f15e71",
+            "id": "71f84df8-af9a-4529-bd39-25b084499468",
             "key": "kubeBaseUrl",
             "value": "https://kubernetes.default.svc"
         },
         {
-            "id": "f17979b9-9cb3-4a2c-b053-9497c4c42f79",
+            "id": "05704086-3994-437c-9fc8-2dfe1a9f1e83",
             "key": "kubeNamespace",
             "value": "default"
         },
         {
-            "id": "fcdeb594-091b-47d4-82d6-f5d2877bf89b",
+            "id": "7fe1a2b3-759d-42a3-9a45-b216ccaee1a4",
             "key": "o2kBaseUrl",
             "value": "http://localhost:3001"
         },
         {
-            "id": "240cbab7-a825-4972-b477-a3ae1d060145",
+            "id": "ed26c9ec-8d1f-4d13-baec-f42f03e2b2d2",
             "key": "apiId",
             "value": "<<Only needed in Postman app, not Newman>>"
         },
         {
-            "id": "9c7cd340-df0a-4512-a9ea-b49409fbe266",
+            "id": "8013d5e9-9b28-4b84-870d-15d823c019bf",
             "key": "apiVersionId",
             "value": "<<Only needed in Postman app, not Newman>>"
         },
         {
-            "id": "0f1e1912-63f6-4e32-94b3-99e3e9746abc",
+            "id": "4228beb7-b2e4-4ee6-b091-65484ef07bc6",
             "key": "schemaId",
             "value": "<<Only needed in Postman app, not Newman>>"
         },
         {
-            "id": "3fc6f4f8-cbdd-4bf6-b26e-5b292d54886b",
+            "id": "89738110-30bb-4393-b58a-ea80b7201439",
             "key": "postmanAPIKey",
             "value": "<<Only needed in Postman app, not Newman>>"
         },
         {
-            "id": "4fe53d62-3cce-4aee-903c-6a9beda6cc84",
+            "id": "ab2116d3-a097-460a-93e6-b7b1753cd9aa",
             "key": "openapi",
             "value": "<<Set automatically in Postman app>> "
         },
         {
-            "id": "de03d102-a5dc-46db-a863-7ee075c277de",
+            "id": "eb954d6a-45fe-4687-a9c0-1949f479a5c0",
             "key": "kongKubernetesResources",
             "value": "{}"
         },
         {
-            "id": "1ea11230-eb0e-41c5-8734-c1973e702dde",
+            "id": "4bb626a7-1ee7-426c-93fa-ea1e0e372ae6",
             "key": "jsonMergePatch",
             "value": "(()=>{var r={10:(r,e,t)=>{\"use strict\";r.exports.apply=t(774),r.exports.generate=t(811),r.exports.merge=t(302)},774:(r,e,t)=>{\"use strict\";var o=t(988).q;r.exports=function r(e,t){if(null===(t=o(t))||\"object\"!=typeof t||Array.isArray(t))return t;(null===(e=o(e))||\"object\"!=typeof e||Array.isArray(e))&&(e={});for(var n=Object.keys(t),u=0;u<n.length;u++){var f=n[u];if(\"__proto__\"===f||\"constructor\"===f||\"prototype\"===f)return e;null===t[f]?e.hasOwnProperty(f)&&delete e[f]:e[f]=r(e[f],t[f])}return e}},811:(r,e,t)=>{\"use strict\";var o=t(63),n=t(988).q;r.exports=function r(e,t){if(e=n(e),t=n(t),null===e||null===t||\"object\"!=typeof e||\"object\"!=typeof t||Array.isArray(e)!==Array.isArray(t))return t;if(Array.isArray(e))return function(r,e){if(r.length!==e.length)return!1;for(var t=0;t<r.length;t++)if(!o(e[t],r[t]))return!1;return!0}(e,t)?void 0:t;var u,f,i={},s=Object.keys(e),c=Object.keys(t),a={};for(f=0;f<c.length;f++)u=c[f],-1===s.indexOf(u)&&(a[u]=!0,i[u]=n(t[u]));var l={};for(f=0;f<s.length;f++)if(u=s[f],-1===c.indexOf(u))l[u]=!0,i[u]=null;else if(null!==e[u]&&\"object\"==typeof e[u]){var y=r(e[u],t[u]);void 0!==y&&(i[u]=y)}else e[u]!==t[u]&&(i[u]=n(t[u]));return Object.keys(i).length>0?i:void 0}},302:r=>{\"use strict\";r.exports=function r(e,t){if(null===e||null===t||\"object\"!=typeof e||\"object\"!=typeof t||Array.isArray(e)!==Array.isArray(t))return t;var o=JSON.parse(JSON.stringify(e));return Object.keys(t).forEach((function(n){void 0!==e[n]?o[n]=r(e[n],t[n]):o[n]=t[n]})),o}},988:r=>{\"use strict\";r.exports.q=function(r){return r&&\"function\"==typeof r.toJSON?r.toJSON():r}},63:r=>{\"use strict\";r.exports=function r(e,t){if(e===t)return!0;if(e&&t&&\"object\"==typeof e&&\"object\"==typeof t){if(e.constructor!==t.constructor)return!1;var o,n,u;if(Array.isArray(e)){if((o=e.length)!=t.length)return!1;for(n=o;0!=n--;)if(!r(e[n],t[n]))return!1;return!0}if(e.constructor===RegExp)return e.source===t.source&&e.flags===t.flags;if(e.valueOf!==Object.prototype.valueOf)return e.valueOf()===t.valueOf();if(e.toString!==Object.prototype.toString)return e.toString()===t.toString();if((o=(u=Object.keys(e)).length)!==Object.keys(t).length)return!1;for(n=o;0!=n--;)if(!Object.prototype.hasOwnProperty.call(t,u[n]))return!1;for(n=o;0!=n--;){var f=u[n];if(!r(e[f],t[f]))return!1}return!0}return e!=e&&t!=t}}},e={},t=function t(o){var n=e[o];if(void 0!==n)return n.exports;var u=e[o]={exports:{}};return r[o](u,u.exports,t),u.exports}(10),o=jsonmergepatch=\"undefined\"==typeof jsonmergepatch?{}:jsonmergepatch;for(var n in t)o[n]=t[n];t.__esModule&&Object.defineProperty(o,\"__esModule\",{value:!0})})();"
         },
         {
-            "id": "6463eb69-eb20-4ec1-b11c-cd3d50498861",
+            "id": "1f45fad9-df4d-4019-bf7f-b4791cb3d193",
             "key": "findResourceDefinitionIndex",
             "value": "0"
         },
         {
-            "id": "4944989f-ecb6-4578-b05e-150f6639b4f0",
+            "id": "c4a21574-834f-4dc3-bd87-5d555c3feee9",
             "key": "currentKubeAPIResource",
             "value": ""
         },
         {
-            "id": "dba6d37a-5f15-4023-917a-0e6b91468b8e",
+            "id": "b377af87-e00b-436e-a304-f75318cadfb1",
             "key": "currentKubeResource",
             "value": ""
         }
