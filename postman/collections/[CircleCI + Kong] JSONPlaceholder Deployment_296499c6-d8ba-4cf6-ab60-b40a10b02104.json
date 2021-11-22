@@ -292,7 +292,7 @@
                     ]
                 },
                 {
-                    "name": "Kubernetes",
+                    "name": "Deploy to Kubernetes",
                     "item": [
                         {
                             "name": "Find Resource Definition",
@@ -757,72 +757,72 @@
     ],
     "variable": [
         {
-            "id": "fc9d2ccc-148c-4a9e-b6b6-a8eb28a16a4a",
+            "id": "8ecf1cd7-81ed-4f18-b219-4a4305cdcc5b",
             "key": "kubeBaseUrl",
             "value": "https://kubernetes.default.svc"
         },
         {
-            "id": "8c0dfa94-9d0e-4925-b62d-fe61964a05c2",
+            "id": "140b815e-fa13-4d15-b56e-9e453c36f9e1",
             "key": "kubeNamespace",
             "value": "default"
         },
         {
-            "id": "14352990-f4b8-4115-b873-467c9f263231",
+            "id": "876ec5f5-4e4e-42db-9217-f35899e1f86c",
             "key": "o2kBaseUrl",
             "value": "http://localhost:3001"
         },
         {
-            "id": "181afd70-72b7-46eb-b079-f256ff68b56f",
+            "id": "fc77631e-b93c-4be4-aa49-2a18f9948460",
             "key": "apiId",
             "value": "<<Only needed in Postman app, not Newman>>"
         },
         {
-            "id": "b03acdb6-0807-47cb-87b6-92fdb3e62667",
+            "id": "f0a6c869-6c38-4ee2-afb1-aa772df6e612",
             "key": "apiVersionId",
             "value": "<<Only needed in Postman app, not Newman>>"
         },
         {
-            "id": "5e6ecd06-f952-4499-bf68-34abbf57780b",
+            "id": "cc7b18d1-7d7a-4fa1-a0dd-4ba354513c87",
             "key": "schemaId",
             "value": "<<Only needed in Postman app, not Newman>>"
         },
         {
-            "id": "e142b618-f359-45c9-ab11-711c969d637e",
+            "id": "8fdec143-2f97-49c8-92f1-085972defe23",
             "key": "postmanAPIKey",
             "value": "<<Only needed in Postman app, not Newman>>"
         },
         {
-            "id": "e1d89f52-e325-4976-bfad-3e16ff2d2f82",
+            "id": "3b5ac124-60e4-4e0e-800e-d92de3750c58",
             "key": "fieldManager",
             "value": "PostmanRuntime"
         },
         {
-            "id": "51898bef-fc7d-4960-a932-b3b643b0cc41",
+            "id": "6791c8ee-0ade-4e70-be1f-cf978d434247",
             "key": "forceUpdates",
             "value": "true"
         },
         {
-            "id": "fc8c9309-6916-4d68-ba63-06a239693575",
+            "id": "8d34ef93-5096-414f-a5b3-ebc979089ab6",
             "key": "openapi",
             "value": "<<Set automatically in Postman app>> "
         },
         {
-            "id": "9b8cd3a4-129e-4031-a1c2-c84a16096bbf",
+            "id": "fd8ff547-bcf0-4bca-b6c8-a0be199549cd",
             "key": "kubeResources",
             "value": "{}"
         },
         {
-            "id": "af71de76-2df4-4347-a274-915f783807ee",
+            "id": "210408d2-769b-478f-965e-42331945c279",
             "key": "findResourceDefinitionIndex",
             "value": "0"
         },
         {
-            "id": "8c5b3c5d-e2ed-492e-82ec-6d3ce55d2744",
+            "id": "340dcb22-6ae7-4cd4-93ca-92fbf4a564ad",
             "key": "currentKubeAPIResource",
             "value": ""
         },
         {
-            "id": "0a762a63-36b8-4b4d-b82c-30f51e3e1791",
+            "id": "0b4ce41a-e5af-481e-90e5-9872d17a2b4f",
             "key": "currentKubeResource",
             "value": ""
         }
