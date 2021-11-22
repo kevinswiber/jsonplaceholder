@@ -7,7 +7,7 @@ orbs:
 executors:
   ci-runner:
     machine: true
-    resource_class: ci-runner/kubernetes
+    resource_class: swiberdev/kubernetes
 
 workflows:
   deployment:
