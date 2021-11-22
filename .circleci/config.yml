@@ -23,7 +23,7 @@ jobs:
       - node/install-packages
       - run: npm install -g newman
       - run:
-          command: node ./ci/openapi2kong/server
+          command: node ./ci/kube-resource-server/server.js
           background: true
       - run: sleep 2
       - run:
