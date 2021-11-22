@@ -16,7 +16,7 @@ servers:
         name: jsonplaceholder-svc
 paths:
   /posts:
-   x-kong-plugin-key-auth:
+    x-kong-plugin-key-auth:
       name: key-auth
       enabled: true
       config:
